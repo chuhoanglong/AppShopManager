@@ -17,9 +17,10 @@ export const showProductTask = () => {
         type: Types.GET_DATA_PRODUCT,
     }
 };
-export const showCustomerTask = () => {
+export const showCustomerTask = (payload) => {
     return {
         type: Types.GET_DATA_CUSTOMERS,
+        payload
     }
 }
 export const postProductTask = (product) => {
@@ -77,6 +78,26 @@ export const fetchPostSuccessProduct = (response) => {
 export const fetchPostFaildProduct = (error) => {
     return {
         type: Types.FETCH_POST_DATA_PRODUCT_FAILD,
+        error
+    }
+}
+
+export const loginWithFirebase = (payload) => {
+    return {
+        type: Types.LOGIN_WITH_FIREBASE,
+        payload
+    }
+}
+
+export const loginWithFirebaseSuccess = (currentUser) => {
+    return {
+        type: Types.LOGIN_WITH_FIREBASE_SUCCESS,
+        currentUser
+    }
+}
+export const loginWithFirebaseFaild = error => {
+    return {
+        type: Types.LOGIN_WITH_FIREBASE_FAILD,
         error
     }
 }

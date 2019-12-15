@@ -6,6 +6,8 @@ import { Divider, Drawer } from '@material-ui/core';
 import PeopleIcon from '@material-ui/icons/People';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import Chat from '@material-ui/icons/Chat';
+
 import { Profile, SidebarNav } from './components';
 
 const useStyles = makeStyles(theme => ({
@@ -51,6 +53,11 @@ const Sidebar = props => {
       title: 'Account',
       href: '/account',
       icon: <AccountBoxIcon />
+    },
+    {
+      title: 'Chat',
+      href: '/Chat',
+      icon: <Chat />
     }
   ];
 

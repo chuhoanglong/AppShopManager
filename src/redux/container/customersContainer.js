@@ -10,8 +10,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        showCustomerTask: () => {
-            dispatch(showCustomerTask())
+        showCustomerTask: (payload) => {
+            dispatch(showCustomerTask(payload))
         }
     }
 };

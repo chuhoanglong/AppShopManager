@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link as RouterLink, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import validate from 'validate.js';
-import { makeStyles } from '@material-ui/styles';
 import {
   Grid,
   Button,
@@ -11,9 +10,10 @@ import {
   Link,
   Typography
 } from '@material-ui/core';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-
 import { Facebook as FacebookIcon, Google as GoogleIcon } from 'icons';
+import firebase from 'firebase';
+import { connect } from 'react-redux';
+import { loginWithFirebase } from '../../redux/action/rootAction';
 
 const schema = {
   email: {
@@ -31,21 +31,193 @@ const schema = {
   }
 };
 
-const useStyles = makeStyles(theme => ({
+
+
+class SignIn extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      isValid: false,
+      values: {},
+      touched: {},
+      errors: null,
+      email: null,
+      password: null
+    }
+  }
+
+  handleSignIn = event => {
+    const { history } = this.props;
+    event.preventDefault();
+    new Promise((resolve, reject) => {
+      this.props.loginWithFirebase({ email: this.state.email, password: this.state.password, resolve, reject });
+    })
+      .then(res => {
+        if (!res.message) {
+          history.push('/users');
+
+        } else {
+          this.setState({ errors: res.message });
+        }
+      })
+      .catch(err => {
+        this.setState({ errors: err })
+      })
+  };
+
+  handleChange = (e) => {
+    const value = e.target[e.target.type === "checkbox" ? "checked" : "value"]
+    const name = e.target.name;
+    this.setState({
+      [name]: value
+    });
+  }
+  render() {
+    return (
+      <div style={styles.root}>
+        <Grid
+          style={styles.grid}
+          container
+        >
+          <Grid
+            style={styles.content}
+            item
+            lg={7}
+            xs={12}
+          >
+            <div style={styles.content}>
+              <div style={styles.contentBody}>
+                <form
+                  style={styles.form}
+                  onSubmit={this.handleSignIn}
+                >
+                  <Typography
+                    style={styles.title}
+                    variant="h2"
+                  >
+                    Sign in
+                  </Typography>
+                  <Typography
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    Sign in with social media
+                  </Typography>
+                  <Grid
+                    style={styles.socialButtons}
+                    container
+                    spacing={2}
+                  >
+                    <Grid item>
+                      <Button
+                        color="primary"
+                        onClick={this.handleSignIn}
+                        size="large"
+                        variant="contained"
+                      >
+                        <FacebookIcon style={styles.socialIcon} />
+                        Login with Facebook
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      <Button
+                        onClick={this.handleSignIn}
+                        size="large"
+                        variant="contained"
+                      >
+                        <GoogleIcon style={styles.socialIcon} />
+                        Login with Google
+                      </Button>
+                    </Grid>
+                  </Grid>
+                  <Typography
+                    align="center"
+                    style={styles.sugestion}
+                    color="textSecondary"
+                    variant="body1"
+                  >
+                    or login with email address
+                  </Typography>
+
+
+                  {
+                    this.state.errors &&
+                    <Typography
+                      align="center"
+                      style={styles.sugestion}
+                      variant="body1"
+                      color="error"
+                    >
+                      {this.state.errors}
+                    </Typography>
+                  }
+
+                  <TextField
+                    style={styles.textField}
+                    label="Email address"
+                    name="email"
+                    fullWidth
+                    onChange={this.handleChange}
+                    type="text"
+                    variant="outlined"
+                  />
+                  <TextField
+                    style={styles.textField}
+                    label="Password"
+                    name="password"
+                    fullWidth
+                    onChange={this.handleChange}
+                    type="password"
+                    variant="outlined"
+                  />
+                  <Button
+                    style={styles.signInButton}
+                    color="primary"
+                    disabled={!this.state.password || !this.state.email}
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                  >
+                    Sign in now
+                  </Button>
+                  <Typography
+                    color="textSecondary"
+                    variant="body1"
+                  >
+                    Don't have an account?{' '}
+                    <Link
+                      component={RouterLink}
+                      to="/sign-up"
+                      variant="h6"
+                    >
+                      Sign up
+                    </Link>
+                  </Typography>
+                </form>
+              </div>
+            </div>
+          </Grid>
+        </Grid>
+      </div>
+    );
+  }
+}
+
+const styles = {
   root: {
-    backgroundColor: theme.palette.background.default,
+    // backgroundColor: theme.palette.background.default,
     height: '100%'
   },
   grid: {
     height: '100%'
   },
   quoteContainer: {
-    [theme.breakpoints.down('md')]: {
-      display: 'none'
-    }
+    display: 'none'
   },
   quote: {
-    backgroundColor: theme.palette.neutral,
+    // backgroundColor: theme.palette.neutral,
     height: '100%',
     display: 'flex',
     justifyContent: 'center',
@@ -60,15 +232,15 @@ const useStyles = makeStyles(theme => ({
     flexBasis: '600px'
   },
   quoteText: {
-    color: theme.palette.white,
+    color: "#333",
     fontWeight: 300
   },
   name: {
-    marginTop: theme.spacing(3),
-    color: theme.palette.white
+    marginTop: "3px",
+    color: "#333"
   },
   bio: {
-    color: theme.palette.white
+    color: "#333"
   },
   contentContainer: {},
   content: {
@@ -79,269 +251,65 @@ const useStyles = makeStyles(theme => ({
   contentHeader: {
     display: 'flex',
     alignItems: 'center',
-    paddingTop: theme.spacing(5),
-    paddingBototm: theme.spacing(2),
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    paddingTop: "5px",
+    paddingBototm: "2px",
+    paddingLeft: "2px",
+    paddingRight: "2px"
   },
   logoImage: {
-    marginLeft: theme.spacing(4)
+    marginLeft: "4px"
   },
   contentBody: {
     flexGrow: 1,
     display: 'flex',
     alignItems: 'center',
-    [theme.breakpoints.down('md')]: {
-      justifyContent: 'center'
-    }
+    justifyContent: 'center'
   },
   form: {
     paddingLeft: 100,
     paddingRight: 100,
     paddingBottom: 125,
     flexBasis: 700,
-    [theme.breakpoints.down('sm')]: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(2)
-    }
+    paddingLeft: "2px",
+    paddingRight: "2px"
   },
   title: {
-    marginTop: theme.spacing(3)
+    marginTop: "3px"
   },
   socialButtons: {
-    marginTop: theme.spacing(3)
+    marginTop: "3px"
   },
   socialIcon: {
-    marginRight: theme.spacing(1)
+    marginRight: "1px"
   },
   sugestion: {
-    marginTop: theme.spacing(2)
+    marginTop: "2px"
   },
   textField: {
-    marginTop: theme.spacing(2)
+    marginTop: "2px",
   },
   signInButton: {
-    margin: theme.spacing(2, 0)
+    margin: "2px",
+
   }
-}));
-
-const SignIn = props => {
-  const { history } = props;
-
-  const classes = useStyles();
-
-  const [formState, setFormState] = useState({
-    isValid: false,
-    values: {},
-    touched: {},
-    errors: {}
-  });
-
-  useEffect(() => {
-    const errors = validate(formState.values, schema);
-
-    setFormState(formState => ({
-      ...formState,
-      isValid: errors ? false : true,
-      errors: errors || {}
-    }));
-  }, [formState.values]);
-
-  const handleBack = () => {
-    history.goBack();
-  };
-
-  const handleChange = event => {
-    event.persist();
-
-    setFormState(formState => ({
-      ...formState,
-      values: {
-        ...formState.values,
-        [event.target.name]:
-          event.target.type === 'checkbox'
-            ? event.target.checked
-            : event.target.value
-      },
-      touched: {
-        ...formState.touched,
-        [event.target.name]: true
-      }
-    }));
-  };
-
-  const handleSignIn = event => {
-    event.preventDefault();
-    history.push('/');
-  };
-
-  const hasError = field =>
-    formState.touched[field] && formState.errors[field] ? true : false;
-
-  return (
-    <div className={classes.root}>
-      <Grid
-        className={classes.grid}
-        container
-      >
-        <Grid
-          className={classes.quoteContainer}
-          item
-          lg={5}
-        >
-          <div className={classes.quote}>
-            <div className={classes.quoteInner}>
-              <Typography
-                className={classes.quoteText}
-                variant="h1"
-              >
-                Hella narwhal Cosby sweater McSweeney's, salvia kitsch before
-                they sold out High Life.
-              </Typography>
-              <div className={classes.person}>
-                <Typography
-                  className={classes.name}
-                  variant="body1"
-                >
-                  Takamaru Ayako
-                </Typography>
-                <Typography
-                  className={classes.bio}
-                  variant="body2"
-                >
-                  Manager at inVision
-                </Typography>
-              </div>
-            </div>
-          </div>
-        </Grid>
-        <Grid
-          className={classes.content}
-          item
-          lg={7}
-          xs={12}
-        >
-          <div className={classes.content}>
-            <div className={classes.contentHeader}>
-              <IconButton onClick={handleBack}>
-                <ArrowBackIcon />
-              </IconButton>
-            </div>
-            <div className={classes.contentBody}>
-              <form
-                className={classes.form}
-                onSubmit={handleSignIn}
-              >
-                <Typography
-                  className={classes.title}
-                  variant="h2"
-                >
-                  Sign in
-                </Typography>
-                <Typography
-                  color="textSecondary"
-                  gutterBottom
-                >
-                  Sign in with social media
-                </Typography>
-                <Grid
-                  className={classes.socialButtons}
-                  container
-                  spacing={2}
-                >
-                  <Grid item>
-                    <Button
-                      color="primary"
-                      onClick={handleSignIn}
-                      size="large"
-                      variant="contained"
-                    >
-                      <FacebookIcon className={classes.socialIcon} />
-                      Login with Facebook
-                    </Button>
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      onClick={handleSignIn}
-                      size="large"
-                      variant="contained"
-                    >
-                      <GoogleIcon className={classes.socialIcon} />
-                      Login with Google
-                    </Button>
-                  </Grid>
-                </Grid>
-                <Typography
-                  align="center"
-                  className={classes.sugestion}
-                  color="textSecondary"
-                  variant="body1"
-                >
-                  or login with email address
-                </Typography>
-                <TextField
-                  className={classes.textField}
-                  error={hasError('email')}
-                  fullWidth
-                  helperText={
-                    hasError('email') ? formState.errors.email[0] : null
-                  }
-                  label="Email address"
-                  name="email"
-                  onChange={handleChange}
-                  type="text"
-                  value={formState.values.email || ''}
-                  variant="outlined"
-                />
-                <TextField
-                  className={classes.textField}
-                  error={hasError('password')}
-                  fullWidth
-                  helperText={
-                    hasError('password') ? formState.errors.password[0] : null
-                  }
-                  label="Password"
-                  name="password"
-                  onChange={handleChange}
-                  type="password"
-                  value={formState.values.password || ''}
-                  variant="outlined"
-                />
-                <Button
-                  className={classes.signInButton}
-                  color="primary"
-                  disabled={!formState.isValid}
-                  fullWidth
-                  size="large"
-                  type="submit"
-                  variant="contained"
-                >
-                  Sign in now
-                </Button>
-                <Typography
-                  color="textSecondary"
-                  variant="body1"
-                >
-                  Don't have an account?{' '}
-                  <Link
-                    component={RouterLink}
-                    to="/sign-up"
-                    variant="h6"
-                  >
-                    Sign up
-                  </Link>
-                </Typography>
-              </form>
-            </div>
-          </div>
-        </Grid>
-      </Grid>
-    </div>
-  );
 };
 
 SignIn.propTypes = {
   history: PropTypes.object
 };
 
-export default withRouter(SignIn);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loginWithFirebase: (payload) => { dispatch(loginWithFirebase(payload)) },
+
+  }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    currentUser: state.authReducer.users,
+
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SignIn));

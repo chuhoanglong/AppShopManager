@@ -6,8 +6,10 @@ function* fetDataCustomers(action) {
     try {
         const customers = yield API.getDataCustomers();
         yield put({ type: Types.FETCH_DATA_CUSTOMERS_SUCCESS, customers });
+        action.payload.resolve(customers);
     } catch (error) {
         yield put({ type: Types.FETCH_DATA_CUSTOMERS_FAILD, error });
+        action.payload.reject(error);
     }
 }
 

@@ -12,7 +12,8 @@ import {
   Settings as SettingsView,
   SignUp as SignUpView,
   SignIn as SignInView,
-  NotFound as NotFoundView
+  NotFound as NotFoundView,
+  ChatScreen as ChatScreenView
 } from './views';
 
 const Routes = () => {
@@ -21,7 +22,7 @@ const Routes = () => {
       <Redirect
         exact
         from="/"
-        to="/users"
+        to="/sign-in"
       />
       <RouteWithLayout
         component={UserListView}
@@ -47,6 +48,15 @@ const Routes = () => {
         layout={MainLayout}
         path="/settings"
       />
+      <RouteWithLayout
+        component={ChatScreenView}
+        exact
+        layout={MainLayout}
+        path="/chat"
+      ></RouteWithLayout>
+
+
+
       <RouteWithLayout
         component={SignUpView}
         exact

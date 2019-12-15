@@ -1,3 +1,4 @@
+import firebase from 'firebase';
 // FETCH DATA To server for product
 export const getDataProducts = async () => {
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
@@ -79,6 +80,29 @@ export const getDataCustomers = async () => {
         console.error(error);
     }
 };
+
+export const loginWithFirebase = (payload) => {
+    const { email, password } = payload;
+    return firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(res => {
+            console.log(res.user.uid);
+            return res.user;
+        })
+        .catch((error) => {
+            // Handle Errors here.
+            return error;
+            // ...
+        });
+}
+
+export const sigUpWithFirebase = (payload) => {
+    const { email, password } = payload;
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(res => res)
+        .catch(function (error) {
+            return error
+        });
+}
 
 // FETCH DATA while user login
 // const getUserLogin = async (name,pass) => {

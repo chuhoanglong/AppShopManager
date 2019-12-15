@@ -18,7 +18,7 @@ import {
   Typography,
   TablePagination
 } from '@material-ui/core';
-
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { getInitials } from 'helpers';
 
 const useStyles = makeStyles(theme => ({
@@ -156,7 +156,7 @@ const UsersTable = props => {
                     <TableCell>{user.phone}</TableCell>
                     <TableCell>
                       {moment(user.createdAt).format('DD/MM/YYYY')}
-                    </TableCell>  
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -164,6 +164,7 @@ const UsersTable = props => {
           </div>
         </PerfectScrollbar>
       </CardContent>
+      {props.isLoading && < CircularProgress style={{ marginLeft: '50%' }} />}
       <CardActions className={classes.actions}>
         <TablePagination
           component="div"
