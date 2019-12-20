@@ -63,6 +63,7 @@ const Topbar = props => {
                   console.log('Sign-out successful.');
                   localStorage.removeItem("userId");
                   localStorage.removeItem("userName");
+                  localStorage.removeItem("listMessage");
                 }).catch(function (error) {
                   // An error happened.
                 });

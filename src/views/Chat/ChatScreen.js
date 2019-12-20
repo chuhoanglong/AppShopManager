@@ -94,28 +94,31 @@ export default class ChatScreen extends Component {
     renderBoxUser = () => {
         const { listMessage, userName } = this.state;
         const listMessageLocal = localStorage.getItem('listMessage');
-        console.log('listMessageLocal', JSON.parse(listMessageLocal));
-        if (listMessage.length == 0) {
-            this.setState({ listMessage: JSON.parse(listMessageLocal) });
-        }
         let temp = []
-        for (let i = 0; i < listMessage.length; i++) {
-            temp.push(
-                <div style={{ position: 'relative', margin: 10 }}>
-                    <input className='buttoninfoPerson' type="button" onClick={() => { this.getData(listMessage[i].idChat) }}></input>
-                    <div className='infoPerson'>
-                        {/* <button className='buttoninfoPerson' onClick={() => { this.getData(listMessage[i].idChat) }}> */}
-                        <div>
-                            <img className='image' src={listMessage[i].avatar} style={{ width: 50, height: 50, borderRadius: 100, alignSelf: 'center' }}></img>
+        console.log('listMessageLocal', JSON.parse(listMessageLocal));
+        if (!!listMessage) {
+
+            if (listMessage.length == 0) {
+                this.setState({ listMessage: JSON.parse(listMessageLocal) });
+            }
+            for (let i = 0; i < listMessage.length; i++) {
+                temp.push(
+                    <div style={{ position: 'relative', margin: 10 }}>
+                        <input className='buttoninfoPerson' type="button" onClick={() => { this.getData(listMessage[i].idChat) }}></input>
+                        <div className='infoPerson'>
+                            {/* <button className='buttoninfoPerson' onClick={() => { this.getData(listMessage[i].idChat) }}> */}
+                            <div>
+                                <img className='image' src={listMessage[i].avatar} style={{ width: 50, height: 50, borderRadius: 100, alignSelf: 'center' }}></img>
+                            </div>
+                            <div className='infoTxt'>
+                                <h4>{listMessage[i].name}</h4>
+                                <h5>{listMessage[i].email}</h5>
+                            </div>
+                            {/* </button> */}
                         </div>
-                        <div className='infoTxt'>
-                            <h4>{listMessage[i].name}</h4>
-                            <h5>{listMessage[i].email}</h5>
-                        </div>
-                        {/* </button> */}
                     </div>
-                </div>
-            )
+                )
+            }
         }
         return temp;
     }
@@ -125,12 +128,10 @@ export default class ChatScreen extends Component {
     render() {
         return (
             <div className='container' style={{ position: "relative", height: "75%" }}>
-                {
-                    this.state.listMessage.length > 0 &&
-                    <div className='boxContainer' style={{ position: 'absolute', left: 10 }}>
-                        {this.renderBoxUser()}
-                    </div>
-                }
+
+                <div className='boxContainer' style={{ position: 'absolute', left: 10 }}>
+                    {this.renderBoxUser()}
+                </div>
                 <div style={{ position: 'absolute', right: 10 }}>
                     <h2>Messaging</h2>
                     <div className="mainChat" >
