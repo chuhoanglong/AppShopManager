@@ -59,7 +59,6 @@ export default class App extends Component {
     firebase.initializeApp(firebaseConfig);
 
     firebase.auth().onAuthStateChanged(function (user) {
-      console.log(user);
       if (user) {
         // User is signed in.
         this.setState({ path: '/user' });

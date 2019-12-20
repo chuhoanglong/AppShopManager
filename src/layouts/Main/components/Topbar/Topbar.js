@@ -61,7 +61,8 @@ const Topbar = props => {
                 firebase.auth().signOut().then(function () {
                   // Sign-out successful.
                   console.log('Sign-out successful.');
-
+                  localStorage.removeItem("userId");
+                  localStorage.removeItem("userName");
                 }).catch(function (error) {
                   // An error happened.
                 });

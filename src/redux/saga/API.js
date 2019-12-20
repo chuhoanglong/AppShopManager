@@ -85,7 +85,6 @@ export const loginWithFirebase = (payload) => {
     const { email, password } = payload;
     return firebase.auth().signInWithEmailAndPassword(email, password)
         .then(res => {
-            console.log(res.user.uid);
             return res.user;
         })
         .catch((error) => {
