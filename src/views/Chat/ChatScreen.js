@@ -10,19 +10,41 @@ export default class ChatScreen extends Component {
             message: [{ content: "hi1", userName: "longhoang" }, { content: "chao ban!", userName: "nguyenthuylinh" }, { content: "hi1", userName: "longhoang" }, { content: "chao ban!", userName: "nguyenthuylinh" }, { content: "hi1", userName: "longhoang" }, { content: "chao ban!", userName: "nguyenthuylinh" }, { content: "hi1", userName: "longhoang" }, { content: "chao ban!", userName: "nguyenthuylinh" }],
             userId: null,
             userName: null,
+            listMessage: []
         }
     }
 
     componentDidMount() {
         this.scrollToBottom();
         this.setState({ userId: localStorage.getItem('userId'), userName: localStorage.getItem('userName').split('@')[0] });
-        firebase.database().ref('message/3DF4fzyKKoXLgFFeNIVUfG9Dg7F3-rHHw4zrweJcVUCyoLOm7DMmYeNJ3').once('value', (snapshot) => {
+        firebase.database().ref('message/3DF4fzyKKoXLgFFeNIVUfG9Dg7F3_ONETOONE_rHHw4zrweJcVUCyoLOm7DMmYeNJ3').once('value', (snapshot) => {
             this.setState({ message: Object.values(snapshot.val()) })
-            console.log(this.state.message);
         })
-        firebase.database().ref('message/3DF4fzyKKoXLgFFeNIVUfG9Dg7F3-rHHw4zrweJcVUCyoLOm7DMmYeNJ3').on('value', (snapshot) => {
+        firebase.database().ref('message/3DF4fzyKKoXLgFFeNIVUfG9Dg7F3_ONETOONE_rHHw4zrweJcVUCyoLOm7DMmYeNJ3').on('value', (snapshot) => {
             this.setState({ message: Object.values(snapshot.val()) })
-            console.log(this.state.message);
+        })
+        firebase.database().ref('message').on('value', (snapshot) => {
+            // console.log(Object.keys(snapshot.val()));
+            let array = Object.keys(snapshot.val());
+            console.log(Object.values(snapshot.val()));
+
+            let listMessage = []
+            for (let i = 0; i < array.length; i++) {
+                let check = array[i].split('_ONETOONE_').indexOf(this.state.userId);
+                if (check === 1) {
+                    let userIdPersonChat = array[i].split('_ONETOONE_').filter(item => { return item !== this.state.userId });
+                    // console.log(userIdPersonChat);
+                    firebase.database().ref(`users/${userIdPersonChat}`).once('value', (snapshot) => {
+                        const { avatar, name, uid, email } = snapshot.val();
+                        // console.log({ avatar, name, uid, email });
+                        listMessage.push({ avatar, name, uid, email });
+                        this.setState({ listMessage });
+                    })
+                }
+
+            }
+            console.log(this.state.listMessage);
+
         })
     }
     componentDidUpdate() {
@@ -30,20 +52,22 @@ export default class ChatScreen extends Component {
     }
     onChangeChat = (e) => {
         const value = e.target[e.target.type === "checkbox" ? "checked" : "value"];
-        console.log(e);
-
         const name = e.target.name;
         this.setState({
             [name]: value
         });
     }
     onSendChat = () => {
-        console.log(this.state.userId);
-        firebase.database().ref('message/3DF4fzyKKoXLgFFeNIVUfG9Dg7F3-rHHw4zrweJcVUCyoLOm7DMmYeNJ3').push({
+        firebase.database().ref('message/3DF4fzyKKoXLgFFeNIVUfG9Dg7F3_ONETOONE_rHHw4zrweJcVUCyoLOm7DMmYeNJ3').push({
             userName: this.state.userName,
             content: this.state.contentChat
         });
         this.setState({ contentChat: '' })
+    }
+    _handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !!this.state.contentChat.trim()) {
+            this.onSendChat();
+        }
     }
     renderBoxChat = () => {
         const { message, userName } = this.state;
@@ -63,20 +87,25 @@ export default class ChatScreen extends Component {
     }
     render() {
         return (
-            <div style={{ position: 'absolute', right: 10 }}>
-                <h3>Messaging</h3>
-                <div className="mainChat" >
-                    <div className="userChat">
-                        {/* <h4>NameUser</h4>
+            <div>
+                <div>
+
+                </div>
+                <div style={{ position: 'absolute', right: 10 }}>
+                    <h3>Messaging</h3>
+                    <div className="mainChat" >
+                        <div className="userChat">
+                            {/* <h4>NameUser</h4>
                         <h5>sadasd</h5> */}
-                    </div>
-                    <div className="contentChat">
-                        {this.renderBoxChat()}
-                        <div ref={(el) => { this.messagesEnd = el; }} />
-                    </div>
-                    <div style={{ marginVertical: 20 }}>
-                        <input className='EnterChat' name='contentChat' type='text' placeholder="Enter content chat!" onChange={this.onChangeChat} value={this.state.contentChat}></input>
-                        <input className='sendChat' value="Send" type="button" onClick={this.onSendChat}></input>
+                        </div>
+                        <div className="contentChat">
+                            {this.renderBoxChat()}
+                            <div ref={(el) => { this.messagesEnd = el; }} />
+                        </div>
+                        <div style={{ marginVertical: 20 }}>
+                            <input className='EnterChat' name='contentChat' type='text' placeholder="Enter content chat!" onChange={this.onChangeChat} onKeyDown={this._handleKeyDown} value={this.state.contentChat}></input>
+                            <input className='sendChat' value="Send" type="button" onClick={this.onSendChat}></input>
+                        </div>
                     </div>
                 </div>
             </div>
