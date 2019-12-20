@@ -62,7 +62,7 @@ export default class App extends Component {
       if (user) {
         // User is signed in.
         this.setState({ path: '/user' });
-        browserHistory.push('/');
+        browserHistory.push('/chat');
       } else {
         // No user is signed in.
         this.setState({ path: '/' })

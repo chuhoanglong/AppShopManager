@@ -23,17 +23,71 @@ h4 {
     font-weight: 800;
 }
 .boxChat{
-    width:300px;
-    height: 50px;
+    width:320px;
+    height: 60px;
     position: relative;
-    margin: 10px 0px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    margin: 20px 0px;
+    padding:10px;
 }
+/* .boxChatDetail{
+    border-radius:10px;
+    border:1px solid #ccc;
+    width: 200px;
+    height: 100px;
+} */
 .message{
     word-wrap: break-word;
     width:250px
 }
+.contentMs{
+    /* padding: 0px;
+    margin-left: 200px;
+    margin-top: 30px;
+    width: 100%; */
+}
 .contentChat{
-    width: 350px;
+    width: 400px;
+    height: 400px;
+    overflow: scroll;
+    overflow-x:hidden;
+    overflow-y:visible;
+}
+.infoPerson{
+    left:10px;
+    border-radius:10px;
+    width:300px;
+    color:'#fff';
+    flex-direction:row;
+    margin: 10px;
+    position: absolute;
+    top:10px;
+}
+.buttoninfoPerson{
+    width:300px;
+    height: 80px;
+    border-radius:10px;
+    background-color:gray;
+    z-index: 100;
+}
+.infoTxt{
+    color:white;
+    font-family:'Helvetica Neue';
+    margin-top: 10px;
+    margin-left:50px
+}
+.container{
+    font-family:'Helvetica Neue'
+
+}
+.image{
+    position:absolute;
+    left: 0px;
+    margin: -5px;
+}
+.boxContainer{
+    width: 400px;
     height: 400px;
     overflow: scroll;
     overflow-x:hidden;
