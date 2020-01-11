@@ -57,7 +57,7 @@ class SignIn extends React.Component {
         if (!res.message) {
           console.log(res);
           localStorage.setItem('userId', res.uid);
-          localStorage.setItem('userName', res.email)
+          localStorage.setItem('userName', res.email);
           history.push('/users');
         } else {
           this.setState({ errors: res.message });

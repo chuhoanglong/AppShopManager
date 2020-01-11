@@ -7,7 +7,8 @@ class UserList extends React.Component {
     super(props);
     this.state = {
       customers: [],
-      isLoading: true
+      carts: [],
+      isLoading: true,
     }
   }
   componentWillMount() {
@@ -22,12 +23,14 @@ class UserList extends React.Component {
     //   measurementId: "G-QFP8J94GDV"
     // };
     // firebase.initializeApp(firebaseConfig);
+
     new Promise((resolve, reject) => {
       this.props.showCustomerTask({ resolve, reject });
     })
       .then(res => {
         if (res) {
-          this.setState({ customers: this.props.customers, isLoading: false })
+          this.setState({ customers: this.props.customers, carts: res.carts, isLoading: false });
+          console.log(res);
         }
       })
       .catch(err => {
@@ -35,13 +38,10 @@ class UserList extends React.Component {
       })
   }
   render() {
-    const { customers } = this.props.customers;
+    const { customers, carts } = this.state;
     return (
       <div style={styles.root}>
-        <UsersToolbar />
-        <div style={styles.content}>
-          <UsersTable users={customers || this.state.customers} isLoading={this.state.isLoading} />
-        </div>
+        <UsersTable users={customers || []} carts={carts || []} isLoading={this.state.isLoading} />
       </div>
     )
   }

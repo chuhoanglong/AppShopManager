@@ -1,8 +1,9 @@
 import firebase from 'firebase';
 // FETCH DATA To server for product
 export const getDataProducts = async () => {
+    const uid = localStorage.getItem('userId');
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const url = "https://dmkjo.sse.codesandbox.io/products"; // site that doesn’t send Access-Control-*
+    const url = "https://dmkjo.sse.codesandbox.io/products/" + uid; // site that doesn’t send Access-Control-*
     try {
         let response = await fetch(
             proxyurl + url,
@@ -61,8 +62,9 @@ export const removeDataProduct = async (product) => {
 
 // FETCH DATA To server for user.
 export const getDataCustomers = async () => {
+    const uid = localStorage.getItem('userId');
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const url = "https://dmkjo.sse.codesandbox.io/users/customers"; // site that doesn’t send Access-Control-*
+    const url = "https://dmkjo.sse.codesandbox.io/customers/" + uid; // site that doesn’t send Access-Control-*
     try {
         let response = await fetch(
             proxyurl + url,
@@ -72,6 +74,95 @@ export const getDataCustomers = async () => {
                     Accept: "application/json",
                     "Content-Type": "application/json"
                 }
+            }
+        );
+        let responseJson = await response.json();
+        return responseJson;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+// FETCH DATA To server for user.
+export const getCustomers = async () => {
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    const url = "https://dmkjo.sse.codesandbox.io/customers/uid"; // site that doesn’t send Access-Control-*
+    try {
+        let response = await fetch(
+            proxyurl + url,
+            {
+                method: 'GET',
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        let responseJson = await response.json();
+        return responseJson;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const deleteProduct = async (payload) => {
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    const url = "https://dmkjo.sse.codesandbox.io/customers/delete"; // site that doesn’t send Access-Control-*
+    try {
+        let response = await fetch(
+            proxyurl + url,
+            {
+                method: 'POST',
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            }
+        );
+        let responseJson = await response.json();
+        return responseJson;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const verifyProduct = async (payload) => {
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    const url = "https://dmkjo.sse.codesandbox.io/customers/verify"; // site that doesn’t send Access-Control-*
+    try {
+        let response = await fetch(
+            proxyurl + url,
+            {
+                method: 'POST',
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            }
+        );
+        let responseJson = await response.json();
+        return responseJson;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const cancelOrder = async (payload) => {
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    const url = "https://dmkjo.sse.codesandbox.io/customers/cancelOrder"; // site that doesn’t send Access-Control-*
+    try {
+        let response = await fetch(
+            proxyurl + url,
+            {
+                method: 'POST',
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
             }
         );
         let responseJson = await response.json();

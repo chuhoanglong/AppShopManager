@@ -44,33 +44,37 @@ class ProductCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      product:{},
+      product: {},
       isCheckSelect: false,
-      selectDelete:[]
+      selectDelete: []
     }
   }
   componentWillMount() {
-    this.setState({ product: this.props.product,});
+    this.setState({ product: this.props.product, });
   }
 
   render() {
     return (
-      <Card 
-      style={styles.root, this.state.isCheckSelect ? styles.Active : styles.root}
-      onClick={() => {
-        this.setState({ isCheckSelect: !this.state.isCheckSelect, });
-        if (this.state.isCheckSelect) {
-          let arrTempPush = [...this.state.selectDelete, this.props.product.id];
-          this.setState({ selectDelete: [...arrTempPush] });
-          console.log(this.state.selectDelete);
-          
-        } else {
-          let arrTempPop = this.state.selectDelete.filter(id => id != this.state.product.id);
-          this.setState({ selectDelete: [...arrTempPop] });
-          console.log(this.state.selectDelete);
+      <Card
+        style={styles.root, this.state.isCheckSelect ? styles.Active : styles.root}
+        // onClick={() => {
+        //   this.setState({ isCheckSelect: !this.state.isCheckSelect, });
+        //   if (this.state.isCheckSelect) {
+        //     let arrTempPush = [...this.state.selectDelete, this.props.product.id];
+        //     this.setState({ selectDelete: [...arrTempPush] });
+        //     console.log(this.state.selectDelete);
 
-        }
-      }}
+        //   } else {
+        //     let arrTempPop = this.state.selectDelete.filter(id => id != this.state.product.id);
+        //     this.setState({ selectDelete: [...arrTempPop] });
+        //     console.log(this.state.selectDelete);
+
+        //   }
+        // }}
+        onClick={() => {
+          this.setState({ isCheckSelect: !this.state.isCheckSelect, }, () => { this.props.onClick(this.props.product.id, this.state.isCheckSelect); });
+
+        }}
       >
         <CardContent>
           <div style={styles.imageContainer}>

@@ -61,8 +61,8 @@ export default class App extends Component {
     firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
         // User is signed in.
-        this.setState({ path: '/user' });
-        browserHistory.push('/');
+        this.setState({ path: '/users' });
+        browserHistory.push('/users');
       } else {
         // No user is signed in.
         this.setState({ path: '/' })

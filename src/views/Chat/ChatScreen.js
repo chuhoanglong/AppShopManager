@@ -31,7 +31,7 @@ export default class ChatScreen extends Component {
                     let userIdPersonChat = array[i].split('_ONETOONE_').filter(item => { return item !== this.state.userId });
                     // console.log(userIdPersonChat);
                     firebase.database().ref(`users/${userIdPersonChat}`).once('value', (snapshot) => {
-                        const { avatar, name, uid, email } = snapshot.val();
+                        const { avatar, name, uid, email } = snapshot.val() || {};
                         let idChat = array[i];
                         // console.log({ avatar, name, uid, email });
                         listMessage.push({ avatar, name, uid, email, idChat });

@@ -27,14 +27,25 @@ class ProductList extends React.Component {
     super(props);
     this.state = {
       products: this.props.products,
-      isCheckSelect:false,
-      selectDelete:[]
+      isCheckSelect: false,
+      selectDelete: []
     }
   }
   componentWillMount() {
     this.props.showProductTask();
   }
+  onClick = (id, isCheckSelect) => {
+    if (isCheckSelect) {
+      let arrTempPush = [...this.state.selectDelete, id];
+      this.setState({ selectDelete: [...arrTempPush] }, () => { console.log('if', this.state.selectDelete); });
+    } else {
+      let arrTempPop = this.state.selectDelete.filter(idItem => idItem != id);
+      this.setState({ selectDelete: [...arrTempPop] }, () => { console.log('else', this.state.selectDelete); });
+
+    }
+  }
   render() {
+    const { isCheckSelect, selectDelete } = this.state;
     return (
       <div style={styles.root}>
         <ProductsToolbar />
@@ -51,7 +62,11 @@ class ProductList extends React.Component {
                 md={6}
                 xs={12}
               >
-                <ProductCard product={product}/>
+                <ProductCard
+                  product={product}
+                  onClick={(id, isCheckSelect) => { this.onClick(id, isCheckSelect) }}
+                  selectDelete={selectDelete}
+                />
               </Grid>
             ))}
           </Grid>

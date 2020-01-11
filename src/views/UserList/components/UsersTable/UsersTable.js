@@ -20,6 +20,7 @@ import {
 } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { getInitials } from 'helpers';
+import UsersToolbar from '../UsersToolbar/UsersToolbar';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -49,6 +50,11 @@ const UsersTable = props => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
+  const [isShow, setIsShow] = useState(false);
+  const [carts, setCarts] = useState([]);
+  const [note, setNote] = useState('');
+  const [idProduct, setidProduct] = useState([]);
+
 
   const handleSelectAll = event => {
     const { users } = props;
@@ -80,7 +86,7 @@ const UsersTable = props => {
         selectedUsers.slice(selectedIndex + 1)
       );
     }
-
+    setidProduct(newSelectedUsers);
     setSelectedUsers(newSelectedUsers);
   };
 
@@ -92,91 +98,163 @@ const UsersTable = props => {
     setRowsPerPage(event.target.value);
   };
 
-  return (
-    <Card
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
-      <CardContent className={classes.content}>
-        <PerfectScrollbar>
-          <div className={classes.inner}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selectedUsers.length === users.length}
-                      color="primary"
-                      indeterminate={
-                        selectedUsers.length > 0 &&
-                        selectedUsers.length < users.length
-                      }
-                      onChange={handleSelectAll}
-                    />
-                  </TableCell>
-                  <TableCell>Họ Tên</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Địa chỉ</TableCell>
-                  <TableCell>SDT</TableCell>
-                  <TableCell>Ngày đặt hàng</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.slice(0, rowsPerPage).map(user => (
-                  <TableRow
-                    className={classes.tableRow}
-                    hover
-                    key={user.id}
-                    selected={selectedUsers.indexOf(user.id) !== -1}
+  const convertVerify = (isVerifying) => {
+    switch (isVerifying) {
+      case 0: return 'Chờ Xác Nhận';
+      case 1: return 'Đã Thanh Toán';
+      case 2: return 'Đã Xác Nhận';
+      case 3: return 'Hủy Đơn';
+      default: return '';
+    }
+  }
+
+  const renderDetails = (carts, note) => {
+    return (
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Tên Sản Phẩm</TableCell>
+            <TableCell>Ghi chú</TableCell>
+            <TableCell>Màu</TableCell>
+            <TableCell>size</TableCell>
+            <TableCell>Giá Sản Phẩm</TableCell>
+            <TableCell>Ngày Đặt Hàng</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {carts.map(cart => (
+            <TableRow
+              className={classes.tableRow}
+              hover
+              key={cart.key}
+            // selected={selectedUsers.indexOf(user.id) !== -1}
+            // onClick={() => { alert('aaa') }}
+            >
+              <TableCell>
+                <div className={classes.nameContainer}>
+                  <Avatar
+                    className={classes.avatar}
+                    src={cart.url}
                   >
+                    {getInitials(cart.name)}
+                  </Avatar>
+                  <Typography variant="body1">{cart.name}</Typography>
+                </div>
+              </TableCell>
+              <TableCell>{note}</TableCell>
+              <TableCell>{cart.color}</TableCell>
+              <TableCell>
+                {cart.size}
+              </TableCell>
+              <TableCell>{cart.price}$</TableCell>
+              <TableCell>
+                {moment(cart.key).format('DD/MM/YYYY')}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    )
+  }
+
+  return (
+    <div>
+      <div style={{ height: 100 }}>
+        <UsersToolbar idProduct={idProduct}></UsersToolbar>
+      </div>
+      <Card
+        {...rest}
+        className={clsx(classes.root, className)}
+      >
+        <CardContent className={classes.content}>
+          <PerfectScrollbar>
+            <div className={classes.inner}>
+              <Table>
+                <TableHead>
+                  <TableRow>
                     <TableCell padding="checkbox">
                       <Checkbox
-                        checked={selectedUsers.indexOf(user.id) !== -1}
+                        checked={selectedUsers.length === users.length}
                         color="primary"
-                        onChange={event => handleSelectOne(event, user.id)}
-                        value="true"
+                        indeterminate={
+                          selectedUsers.length > 0 &&
+                          selectedUsers.length < users.length
+                        }
+                        onChange={handleSelectAll}
                       />
                     </TableCell>
-                    <TableCell>
-                      <div className={classes.nameContainer}>
-                        <Avatar
-                          className={classes.avatar}
-                          src={user.avatarUrl}
-                        >
-                          {getInitials(user.name)}
-                        </Avatar>
-                        <Typography variant="body1">{user.name}</Typography>
-                      </div>
-                    </TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      {user.address.city}, {user.address.state},{' '}
-                      {user.address.country}
-                    </TableCell>
-                    <TableCell>{user.phone}</TableCell>
-                    <TableCell>
-                      {moment(user.createdAt).format('DD/MM/YYYY')}
-                    </TableCell>
+                    <TableCell>Họ Tên</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Địa chỉ</TableCell>
+                    <TableCell>SDT</TableCell>
+                    <TableCell>Ngày đặt hàng</TableCell>
+                    <TableCell>Trạng Thái</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </PerfectScrollbar>
-      </CardContent>
-      {props.isLoading && < CircularProgress style={{ marginLeft: '50%' }} />}
-      <CardActions className={classes.actions}>
-        <TablePagination
-          component="div"
-          count={users.length}
-          onChangePage={handlePageChange}
-          onChangeRowsPerPage={handleRowsPerPageChange}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
-        />
-      </CardActions>
-    </Card>
+                </TableHead>
+                <TableBody>
+                  {users.slice(0, rowsPerPage).map(user => (
+                    <TableRow
+                      className={[classes.tableRow, { backgroundColor: '#666' }]}
+                      hover
+                      key={user.id}
+                      selected={selectedUsers.indexOf(user.id) !== -1}
+                      onClick={() => { setIsShow(true); setCarts(user.carts); setNote(user.note || ''); }}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={selectedUsers.indexOf(user.id) !== -1}
+                          color="primary"
+                          onChange={event => handleSelectOne(event, user.id)}
+                          value="true"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className={classes.nameContainer}>
+                          <Avatar
+                            className={classes.avatar}
+                            src={user.avatarUrl}
+                          >
+                            {getInitials(user.name)}
+                          </Avatar>
+                          <Typography variant="body1">{user.name}</Typography>
+                        </div>
+                      </TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        {user.address.city}, {user.address.state},{' '}
+                        {user.address.country}
+                      </TableCell>
+                      <TableCell>{user.phone}</TableCell>
+                      <TableCell>
+                        {moment(user.createdAt).format('DD/MM/YYYY')}
+                      </TableCell>
+                      <TableCell>
+                        {
+                          convertVerify(user.isVerifying)
+                        }
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              {isShow && renderDetails(carts, note)}
+            </div>
+          </PerfectScrollbar>
+        </CardContent>
+        {props.isLoading && < CircularProgress style={{ marginLeft: '50%' }} />}
+        <CardActions className={classes.actions}>
+          <TablePagination
+            component="div"
+            count={users.length}
+            onChangePage={handlePageChange}
+            onChangeRowsPerPage={handleRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[5, 10, 25]}
+          />
+        </CardActions>
+      </Card>
+    </div>
   );
 };
 

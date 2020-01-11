@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     padding: theme.spacing(1),
     display: 'flex',
-    flexBasis: 420
+    flexBasis: 420,
   },
   icon: {
     marginRight: theme.spacing(1),
@@ -21,7 +21,8 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     fontSize: '14px',
     lineHeight: '16px',
-    letterSpacing: '-0.05px'
+    letterSpacing: '-0.05px',
+    width:400,
   }
 }));
 
